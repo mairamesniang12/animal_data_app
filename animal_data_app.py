@@ -20,7 +20,7 @@ def add_bg_from_local(image_file):
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);  /* voile noir à 50% */
+            background: rgba(0, 0, 0, 0.5);  /* voile noir  */
             z-index: -1;
         }}
         [data-testid="stHeader"], .stApp > header {{ background: rgba(0,0,0,0); }}
@@ -34,26 +34,110 @@ add_bg_from_local('images/img_file3.jpg')
 st.set_page_config(page_title="CoinAfrique Animals Scraper", layout="wide")
 st.markdown("""
 <style>
-    /* Fond général clair */
+    /* Fond crème/beige clair pour la page principale */
     .stApp {
-        background-color: noir;
+        background-color: #FFF8E7 !important;
     }
-    /* Texte principal en blanc (très lisible) */
-    .css-1v0mbdj, p, div, span, li {
-        color: blanc !important;
+    
+    /* Sidebar en orange CoinAfrique vibrant */
+    [data-testid="stSidebar"] {
+        background-color: #FF6B35 !important;
     }
-    /* Liens en bleu CoinAfrique mais lisibles */
+    
+    /* Texte blanc dans le sidebar pour les labels */
+    [data-testid="stSidebar"] * {
+        color: #FFFFFF !important;
+    }
+    
+    /* Les selectbox et inputs en BLANC dans le sidebar */
+    [data-testid="stSidebar"] .stSelectbox > div > div,
+    [data-testid="stSidebar"] input,
+    [data-testid="stSidebar"] select,
+    [data-testid="stSidebar"] textarea {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    /* Dropdown menu en BLANC */
+    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    /* Menu déroulant ouvert en BLANC */
+    [data-baseweb="popover"] {
+        background-color: #FFFFFF !important;
+    }
+    
+    [data-baseweb="popover"] * {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    /* Liste déroulante en blanc avec texte noir */
+    ul[role="listbox"] {
+        background-color: #FFFFFF !important;
+    }
+    
+    ul[role="listbox"] li {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    /* Au survol: fond blanc et texte noir */
+    ul[role="listbox"] li:hover {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+    }
+    
+    /* Boutons de téléchargement en BLANC dans le sidebar */
+    [data-testid="stSidebar"] .stDownloadButton > button {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border: 2px solid #FFFFFF !important;
+    }
+    
+    [data-testid="stSidebar"] .stDownloadButton > button:hover {
+        background-color: #F0F0F0 !important;
+        color: #000000 !important;
+    }
+    
+    /* Texte marron foncé sur la page principale */
+    .stApp * {
+        color: #3E2723 !important;
+    }
+    
+    p, div, span, li, h1, h2, h3, h4, h5, h6, 
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stText"] {
+        color: #3E2723 !important;
+    }
+    
+    /* Titres en marron très foncé */
+    h1, h2, h3, h4, h5, h6 {
+        color: #2C1810 !important;
+        font-weight: 800 !important;
+    }
+    
+    /* Liens en orange vif */
     a {
-        color: noir !important;
-        font-weight: 600;
+        color: #FF6B35 !important;
+        font-weight: 700;
     }
     a:hover {
-        color: blanc !important;
+        color: #FF8C42 !important;    
+    }
+    
+    /* Boutons normaux en orange harmonisé */
+    .stButton > button {
+        background-color: #FF6B35 !important;
+        color: white !important;
+        border: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center; color: black;'>MY DATA APP</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: black;'>ANIMAL DATA APP</h1>", unsafe_allow_html=True)
 #st.markdown("<h1 style='text-align: center; color: #2E7D32;'> CoinAfrique Animals Data Scraper </h1>", unsafe_allow_html=True)
 
 st.markdown(""" This application allows scraping animal data from CoinAfrique across multiple pages.And you can also download data already scraped through Web Scraper (uncleaned).
@@ -75,7 +159,7 @@ def init_database():
     conn = sqlite3.connect('coinafrique_animaux.db')
     cursor = conn.cursor()
     
-    # Table pour les chiens
+    # Table for dogs
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS chiens (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +170,7 @@ def init_database():
         )
     ''')
     
-    # Table pour les moutons
+    # Table for the sheep
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS moutons (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -97,7 +181,7 @@ def init_database():
         )
     ''')
     
-    # Table pour poules/lapins/pigeons
+    # Table for chickens/rabbits/pigeons
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS poules_lapins_pigeons (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,7 +192,7 @@ def init_database():
         )
     ''')
     
-    # Table pour autres animaux
+    # Table for other animals
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS autres_animaux (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,25 +206,22 @@ def init_database():
     conn.commit()
     conn.close()
 
-# Fonction pour sauvegarder dans la base de données
 def save_to_database(dataframe, table_name):
     conn = sqlite3.connect('coinafrique_animaux.db')
     dataframe.to_sql(table_name, conn, if_exists='replace', index=False)
     conn.close()
 
-# Fonction pour charger depuis la base de données
 def load_from_database(table_name):
     conn = sqlite3.connect('coinafrique_animaux.db')
     df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
     conn.close()
     return df
 
-# Fonction de conversion CSV
+
 @st.cache_data
 def convert_df(df):
     return df.to_csv().encode('utf-8')
 
-# Fonction pour afficher et télécharger les données
 def load(dataframe, title, key, key1) :
     # Créer 3 colonnes avec celle du milieu plus large
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -148,13 +229,13 @@ def load(dataframe, title, key, key1) :
     
     with col2:
         if st.button(f"Afficher {title}", key=f"btn_{key}"):
-            st.subheader(f'Dimensions des données - {title}')
+            st.subheader(f'Data Dimensions - {title}')
             st.write(f'Dimensions: {dataframe.shape[0]} lignes et {dataframe.shape[1]} colonnes')
             st.dataframe(dataframe, use_container_width=True)
             
             csv = convert_df(dataframe)
             st.download_button(
-                label="Télécharger en CSV",
+                label="Download as CSV",
                 data=csv,
                 file_name=f'{title.replace(" ", "_")}.csv',
                 mime='text/csv',
@@ -164,8 +245,8 @@ def load(dataframe, title, key, key1) :
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-# Fonction de scraping pour les chiens
 
+# Fonction de scraping pour les chiens
 def  load_scrape_chiens(n_pages):
     df = pd.DataFrame()
     # loop over pages indexes
@@ -202,7 +283,7 @@ def  load_scrape_chiens(n_pages):
         df=pd.concat([df,DF],axis=0).reset_index(drop=True)
     return df
 
-# Fonction de scraping pour les moutons
+# Scraping function for sheep
 def  load_scrape_moutons(n_pages):
     df = pd.DataFrame()
     # loop over pages indexes
@@ -240,7 +321,7 @@ def  load_scrape_moutons(n_pages):
     return df
 
 
-# Fonction de scraping pour poules/lapins/pigeons
+# Scraping function for chickens/rabbits/pigeons
 def  load_scrape_poules_lapins_et_pigeons(n_pages):
     df = pd.DataFrame()
     # loop over pages indexes
@@ -277,7 +358,7 @@ def  load_scrape_poules_lapins_et_pigeons(n_pages):
         df=pd.concat([df,DF],axis=0).reset_index(drop=True)
     return df
 
-# Fonction de scraping pour autres animaux
+# Scraping function for other animals
 def  load_scrape_autres_animaux(n_pages):
     df = pd.DataFrame()
     # loop over pages indexes
@@ -314,105 +395,98 @@ def  load_scrape_autres_animaux(n_pages):
         df=pd.concat([df,DF],axis=0).reset_index(drop=True)
     return df
 
-# Interface utilisateur
-st.sidebar.header('Paramètres')
-pages = st.sidebar.selectbox('Nombre de pages à scraper', list(range(1, 17)))
-category = st.sidebar.selectbox('Catégorie', ['Toutes', 'Chiens', 'Moutons', 'Poules/Lapins/Pigeons', 'Autres animaux'])
+# User interface
+st.sidebar.header('Settings')
+pages = st.sidebar.selectbox('Number of pages to scrape', list(range(1, 17)))
+category = st.sidebar.selectbox('Category', ['All', 'Dogs', 'Sheep', 'Chickens/Rabbits/Pigeons', 'Other animals'])
 choice = st.sidebar.selectbox('Options', [
-    'Scraper les données',
-    'Télécharger données scrapées',
-    'Dashboard des données',
-    'Évaluer l\'application'
+    'scrape data across multiple pages',
+    'Download data with web scraper',
+    'Data Dashboard',
+    'Evaluate the application'
 ])
 
-# Initialiser la base de données
+# Initialize the database
 init_database()
-#add_bg_from_local('img_file3.jpg') 
-
-#local_css('style.css')  
-if choice == 'Scraper les données':
-    st.header("Scraping des données")
+ 
+if choice == 'scrape data across multiple pages':
+    st.header("Data scraping")
     
-    if st.button(" Lancer le scraping", type="primary"):
+    if st.button(" Start scraping", type="primary"):
         categories_to_scrape = []
         
-        if category == 'Toutes':
-            categories_to_scrape = ['Chiens', 'Moutons', 'Poules/Lapins/Pigeons', 'Autres animaux']
+        if category == 'All':
+            categories_to_scrape = ['Dogs', 'Sheep', 'Chickens/Rabbits/Pigeons', 'Other animals']
         else:
             categories_to_scrape = [category]
         
         for cat in categories_to_scrape:
             st.subheader(f" Scraping: {cat}")
             
-            if cat == 'Chiens':
+            if cat == 'Dogs':
                 df =load_scrape_chiens(pages)
                 if not df.empty:
                     save_to_database(df, 'chiens')
-                    st.success(f"{len(df)} chiens scrapés avec succès!")
+                    st.success(f"{len(df)} Dogs successfully scrapped!")
                     st.dataframe(df)
                     
-                    # Bouton de téléchargement
                     csv = convert_df(df)
                     st.download_button(
-                        label="⬇Télécharger Chiens CSV",
+                        label="⬇Download Dogs CSV",
                         data=csv,
                         file_name='chiens.csv',
                         mime='text/csv',
                         key='download_chiens_scraped'
                     )
                     
-            elif cat == 'Moutons':
+            elif cat == 'Sheep':
                 df = load_scrape_moutons(pages)
                 if not df.empty:
                     save_to_database(df, 'moutons')
-                    st.success(f"{len(df)} moutons scrapés avec succès!")
+                    st.success(f"{len(df)} Sheep successfully scrapped!")
                     st.dataframe(df)
                     
-                    # Bouton de téléchargement
                     csv = convert_df(df)
                     st.download_button(
-                        label="⬇Télécharger Chiens CSV",
+                        label="⬇Download sheep CSV",
                         data=csv,
                         file_name='moutons',
                         mime='text/csv',
                         key='download_moutons_scraped'
                     )
                     
-            elif cat == 'Poules/Lapins/Pigeons':
+            elif cat == 'Chickens/Rabbits/Pigeons':
                 df = load_scrape_poules_lapins_et_pigeons(pages)
                 if not df.empty:
                     save_to_database(df, 'poules_lapins_pigeons')
-                    st.success(f"{len(df)} chiens scrapés avec succès!")
+                    st.success(f"{len(df)} Chickens/Rabbits/Pigeons successfully scrapped!")
                     st.dataframe(df)
                     
-                    # Bouton de téléchargement
                     csv = convert_df(df)
                     st.download_button(
-                        label="⬇Télécharger poules_lapins_pigeons CSV",
+                        label="⬇Download chickens_rabbits_pigeons CSV",
                         data=csv,
                         file_name='poules_lapins_pigeons.csv',
                         mime='text/csv',
                         key='download_poules_lapins_pigeons_scraped'
                     )
-            elif cat == 'Autres animaux':
+            elif cat == 'Other animals':
                 df = load_scrape_autres_animaux(pages)
                 if not df.empty:
                     save_to_database(df, 'autres_animaux')
-                    st.success(f"{len(df)} chiens scrapés avec succès!")
+                    st.success(f"{len(df)} Other animals successfully scrapped!")
                     st.dataframe(df)
                     
-                    # Bouton de téléchargement
                     csv = convert_df(df)
                     st.download_button(
-                        label="⬇Télécharger autres_animaux CSV",
+                        label="⬇Download other_animals CSV",
                         data=csv,
                         file_name='autres_animaux.csv',
                         mime='text/csv',
                         key='download_autres_animaux_scraped'
                     )
-
-elif choice == 'Télécharger données scrapées':
-    st.header("Télécharger les données de la base")
+elif choice == 'Download data with web scraper':
+    st.header("download the database data")
     
     chiens = pd.read_csv('data/categories_chiens_sitemap.csv')
     poules_lapins_pigeons = pd.read_csv('data/categorie_poules_lapins_et_pigeons.csv')
@@ -423,31 +497,29 @@ elif choice == 'Télécharger données scrapées':
     load(poules_lapins_pigeons, 'poules lapins pigeons', '2', '102')
     load(moutons , 'moutons', '3', '103')
     load(autres_animaux, 'autres animaux', '4', '104')
-
-elif choice == 'Dashboard des données':
+elif choice == 'Data Dashboard':
+    st.divider()
     st.header("Tableau de bord")
     
     try:
-        # Charger toutes les données
         df_chiens = load_from_database('chiens')
         df_moutons = load_from_database('moutons')
         df_plp = load_from_database('poules_lapins_pigeons')
         df_autres = load_from_database('autres_animaux')
         
-        # Statistiques générales
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric(" Chiens", len(df_chiens))
+            st.metric(" Dogs", len(df_chiens))
         with col2:
-            st.metric("Moutons", len(df_moutons))
+            st.metric("Sheep", len(df_moutons))
         with col3:
-            st.metric(" Poules/Lapins/Pigeons", len(df_plp))
+            st.metric(" Chickens/Rabbits/Pigeons", len(df_plp))
         with col4:
-            st.metric(" Autres animaux", len(df_autres))
+            st.metric(" Other animals", len(df_autres))
         
         # Graphiques
-        st.subheader("Distribution par catégorie")
+        st.subheader("Distribution by category")
         
         fig, ax = plt.subplots(figsize=(10, 6))
         categories = ['Chiens', 'Moutons', 'Poules/Lapins/Pigeons', 'Autres']
@@ -455,18 +527,19 @@ elif choice == 'Dashboard des données':
         
         colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
         ax.bar(categories, counts, color=colors)
-        ax.set_xlabel('Catégories')
-        ax.set_ylabel('Nombre d\'annonces')
-        ax.set_title('Distribution des annonces par catégorie')
+        ax.set_xlabel('Categories')
+        ax.set_ylabel('Number of ads')
+        ax.set_title('Distribution of ads by category')
         plt.xticks(rotation=45)
         st.pyplot(fig)
         
         # Top addresses
-        st.subheader("Top localisations")
+        st.subheader("Top locations")
         
         all_adress = pd.concat([
             df_chiens[['adress']] if not df_chiens.empty else pd.DataFrame(),
             df_moutons[['adress']] if not df_moutons.empty else pd.DataFrame(),
+            df_plp[['adress']] if not df_plp.empty else pd.DataFrame(),
             df_autres[['adress']] if not df_autres.empty else pd.DataFrame()
         ])
         
@@ -475,29 +548,29 @@ elif choice == 'Dashboard des données':
             
             fig2, ax2 = plt.subplots(figsize=(10, 6))
             ax2.barh(top_adress.index, top_adress.values, color='#95E1D3')
-            ax2.set_xlabel('Nombre d\'annonces')
-            ax2.set_title('Top 10 des localisations')
+            ax2.set_xlabel('Number of ads')
+            ax2.set_title('Top 10 locations')
             st.pyplot(fig2)
         
     except Exception as e:
-        st.error(f"Erreur lors du chargement des données: {str(e)}")
-        st.info("Veuillez d'abord scraper des données ou vérifier que la base de données contient des informations.")
+        st.error(f"Error loading data: {str(e)}")
+        st.info("Dashboard data not available yet.")
 
-else:  # Évaluer l'application
-    st.header(" Évaluation de l'application")
-    st.markdown("<h3 style='text-align: center;'>Donnez votre avis</h3>", unsafe_allow_html=True)
+else:  
+    st.header(" Evaluate the application")
+    st.markdown("<h3 style='text-align: center;'>Give your opinion</h3>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button(" Formulaire Kobo"):
+        if st.button(" Kobo Form"):
             st.markdown(
                 '<meta http-equiv="refresh" content="0; url=https://ee.kobotoolbox.org/x/fWIhpUbp">',
                 unsafe_allow_html=True
             )
     
     with col2:
-        if st.button(" Formulaire Google"):
+        if st.button(" Google Form"):
             st.markdown(
                 '<meta http-equiv="refresh" content="0; url=https://docs.google.com/forms/d/e/1FAIpQLSfGUlpFy6i2tuhoCFu00O4dQRSef_60YG_GXljsi7ski4VFmw/viewform?usp=header">',
                 unsafe_allow_html=True
