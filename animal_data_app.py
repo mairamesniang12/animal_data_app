@@ -145,7 +145,7 @@ view a dashboard of data (cleaned)
 fill in an app evaluation form. 
 * **Python Libraries:** pandas, streamlit, requests, bs4, sqlite3, numpy, base64
 * **Data Source:** [CoinAfrique Senegal](https://sn.coinafrique.com/)
-* **Categories:** Chiens, Moutons, Poules/Lapins/Pigeons, Autres animaux
+* **Categories:** Dogs,sheep, chickens/rabbits/pigeons,  other animals
 """)
 
 
@@ -161,7 +161,7 @@ def init_database():
     
     # Table for dogs
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS chiens (
+        CREATE TABLE IF NOT EXISTS Dogs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             Name TEXT,
             price TEXT,
@@ -408,7 +408,7 @@ choice = st.sidebar.selectbox('Options', [
 
 # Initialize the database
 init_database()
- 
+#scrape data across multiple pages
 if choice == 'scrape data across multiple pages':
     st.header("Data scraping")
     
@@ -485,27 +485,29 @@ if choice == 'scrape data across multiple pages':
                         mime='text/csv',
                         key='download_autres_animaux_scraped'
                     )
+#Download data with web scraper
 elif choice == 'Download data with web scraper':
     st.header("download the database data")
     
-    chiens = pd.read_csv('data/categories_chiens_sitemap.csv')
-    poules_lapins_pigeons = pd.read_csv('data/categorie_poules_lapins_et_pigeons.csv')
-    moutons = pd.read_csv('data/categorie_moutons.csv')
-    autres_animaux = pd.read_csv('data/categorie_autres_animaux.csv')
+    Dogs = pd.read_csv('data/categories_chiens_sitemap.csv')
+    Chickens_Rabbits_Pigeons = pd.read_csv('data/categorie_poules_lapins_et_pigeons.csv')
+    Sheep = pd.read_csv('data/categorie_moutons.csv')
+    Other_animals = pd.read_csv('data/categorie_autres_animaux.csv')
     # load the data
-    load( chiens, 'chiens', '1', '101')
-    load(poules_lapins_pigeons, 'poules lapins pigeons', '2', '102')
-    load(moutons , 'moutons', '3', '103')
-    load(autres_animaux, 'autres animaux', '4', '104')
+    load( Dogs, 'Dogs', '1', '101')
+    load(Chickens_Rabbits_Pigeons, 'Chickens Rabbits Pigeons', '2', '102')
+    load(Sheep, 'Sheep', '3', '103')
+    load(Other_animals, 'Other animals', '4', '104')
+#Data Dashboard
 elif choice == 'Data Dashboard':
     st.divider()
     st.header("Tableau de bord")
     
     try:
-        df_chiens = load_from_database('chiens')
-        df_moutons = load_from_database('moutons')
-        df_plp = load_from_database('poules_lapins_pigeons')
-        df_autres = load_from_database('autres_animaux')
+        df_chiens = load_from_database(' Dogs')
+        df_moutons = load_from_database('Sheep')
+        df_plp = load_from_database('Chickens_Rabbits_Pigeons')
+        df_autres = load_from_database(' Other_animals')
         
         col1, col2, col3, col4 = st.columns(4)
         
@@ -522,7 +524,7 @@ elif choice == 'Data Dashboard':
         st.subheader("Distribution by category")
         
         fig, ax = plt.subplots(figsize=(10, 6))
-        categories = ['Chiens', 'Moutons', 'Poules/Lapins/Pigeons', 'Autres']
+        categories = ['Dogs', 'Sheep', 'Chickens/Rabbits/Pigeons', 'Other animals']
         counts = [len(df_chiens), len(df_moutons), len(df_plp), len(df_autres)]
         
         colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A']
@@ -555,7 +557,7 @@ elif choice == 'Data Dashboard':
     except Exception as e:
         st.error(f"Error loading data: {str(e)}")
         st.info("Dashboard data not available yet.")
-
+#Evaluate the application
 else:  
     st.header(" Evaluate the application")
     st.markdown("<h3 style='text-align: center;'>Give your opinion</h3>", unsafe_allow_html=True)
@@ -575,7 +577,6 @@ else:
                 '<meta http-equiv="refresh" content="0; url=https://docs.google.com/forms/d/e/1FAIpQLSfGUlpFy6i2tuhoCFu00O4dQRSef_60YG_GXljsi7ski4VFmw/viewform?usp=header">',
                 unsafe_allow_html=True
             )
-
 
 
 
