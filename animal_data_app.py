@@ -15,7 +15,7 @@ def add_bg_from_local(image_file):
         f"""
         <style>
         .stApp 
-            {{ background-image: url("data:image/jpeg;base64,{encoded_string}"); }}
+            {{ background-image: url("data:image/png;base64,{encoded_string}"); }}
         .stApp::before {{
             content: "";
             position: fixed;
@@ -30,7 +30,7 @@ def add_bg_from_local(image_file):
         unsafe_allow_html=True
     )
 
-add_bg_from_local('images/img_file3.jpg')
+add_bg_from_local('images/img_file5.png')
 st.set_page_config(page_title="CoinAfrique Animals Scraper", layout="wide")
 st.markdown("""
 <style>
@@ -575,6 +575,7 @@ else:
                 '<meta http-equiv="refresh" content="0; url=https://docs.google.com/forms/d/e/1FAIpQLSfGUlpFy6i2tuhoCFu00O4dQRSef_60YG_GXljsi7ski4VFmw/viewform?usp=header">',
                 unsafe_allow_html=True
             )
+
 
 
 
